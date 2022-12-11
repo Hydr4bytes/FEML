@@ -47,23 +47,17 @@ namespace FEML
                 Console.WriteLine();
             }
             Console.WriteLine($"Total amount of tokens: {tokens.Count}");
+            Console.WriteLine();
 
-            Parser parser = new Parser();
-            Dictionary<string, object> result = parser.Parse(tokens);
+            Dictionary<string, object> result = Parser.Parse(tokens);
+            Console.WriteLine($"Done parsing.");
 
             Console.WriteLine("Result:");
-            foreach (var obj in result)
-            {
-                Console.Write(obj.Key + ": ");
-
-                var list = obj.Value as List<object>;
-                if (list != null)
-                    Console.WriteLine(string.Join(",", list));
-                else
-                    Console.WriteLine(obj.Value);
-            }
-
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions() { WriteIndented = true }));
+            Console.WriteLine();
+
+            Console.WriteLine("Serialized result:");
+            Console.WriteLine(Serialization.Serialize(result));
         }
     }
 }

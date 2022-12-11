@@ -10,18 +10,19 @@ using System.Threading.Tasks;
 
 namespace FEML
 {
-    internal class Parser
+    internal static class Parser
     {
-        private int tokenIdx = 0;
-        private List<Token> tokens;
-        private Dictionary<string, object> result;
+        private static int tokenIdx = 0;
+        private static List<Token> tokens;
+        private static Dictionary<string, object> result;
 
-        private TokenType NextTokenType => tokens[tokenIdx + 1].TokenType;
+        private static TokenType NextTokenType => tokens[tokenIdx + 1].TokenType;
 
-        public dynamic Parse(List<Token> tokens)
+        public static Dictionary<string, object> Parse(List<Token> inputTokens)
         {
-            this.tokens = tokens;
-            this.result = new Dictionary<string, object>();
+            tokenIdx = 0;
+            tokens = inputTokens;
+            result = new Dictionary<string, object>();
 
             while (tokenIdx < tokens.Count)
             {
@@ -44,12 +45,10 @@ namespace FEML
                 tokenIdx++;
             }
 
-            Console.WriteLine("Done parsing.");
-
             return result;
         }
 
-        private object ParseTokenValue(Token token)
+        private static object ParseTokenValue(Token token)
         {
             object value = null;
             switch (token.TokenType)
@@ -70,7 +69,7 @@ namespace FEML
             return value;
         }
 
-        private Tuple<string, object> ConsumeVariable(Token startToken)
+        private static Tuple<string, object> ConsumeVariable(Token startToken)
         {
             string name = string.Empty;
             object value = null;
@@ -98,7 +97,7 @@ namespace FEML
             return Tuple.Create(name, value);
         }
 
-        private List<object> ConsumeArray()
+        private static List<object> ConsumeArray()
         {
             ConsumeToken(TokenType.OpenSquareBracket);
 
@@ -117,7 +116,7 @@ namespace FEML
             return array;
         }
 
-        private Dictionary<string, object> ConsumeStruct()
+        private static Dictionary<string, object> ConsumeStruct()
         {
             ConsumeToken(TokenType.OpenCurlyBracket);
             Dictionary<string, object> dict = new Dictionary<string, object>();
@@ -133,7 +132,7 @@ namespace FEML
             return dict;
         }
 
-        private Token ConsumeToken(params TokenType[] types)
+        private static Token ConsumeToken(params TokenType[] types)
         {
             tokenIdx++;
             if (tokenIdx >= tokens.Count)
@@ -141,14 +140,12 @@ namespace FEML
                 throw new Exception("Unexpected end of token stream");
             }
 
-            Console.WriteLine(tokens[tokenIdx].Value);
-
             ExpectTokenType(tokens[tokenIdx], types);
 
             return tokens[tokenIdx];
         }
 
-        private void ExpectTokenType(Token token, params TokenType[] types)
+        private static void ExpectTokenType(Token token, params TokenType[] types)
         {
             bool matched = false;
             foreach (TokenType type in types)
