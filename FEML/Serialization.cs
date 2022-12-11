@@ -22,11 +22,11 @@ namespace FEML
 
                 if (item.Value is Dictionary<string, object>)
                 {
-                    AppendStruct(sb, item.Value as Dictionary<string, object>);
+                    AppendStruct(sb, (Dictionary<string, object>)item.Value);
                 }
                 else if (item.Value is List<object>)
                 {
-                    AppendArray(sb, item.Value as List<object>);
+                    AppendArray(sb, (List<object>)item.Value);
                 }
                 else
                 {
@@ -60,13 +60,13 @@ namespace FEML
                 if (field.Value is Dictionary<string, object>)
                 {
                     sb.Append("\t").Append($"{field.Key} = ");
-                    AppendStruct(sb, field.Value as Dictionary<string, object>, depth + 1);
+                    AppendStruct(sb, (Dictionary<string, object>)field.Value, depth + 1);
                     sb.AppendLine();
                 }
                 else if (field.Value is List<object>)
                 {
                     sb.Append("\t").Append($"{field.Key} = ");
-                    AppendArray(sb, field.Value as List<object>);
+                    AppendArray(sb, (List<object>)field.Value);
                     sb.AppendLine();
                 }
                 else
