@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FEML", "FEML\FEML.csproj", "{076B7BBF-A05C-40AD-BBD1-2A36E2ED3EBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{076B7BBF-A05C-40AD-BBD1-2A36E2ED3EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{076B7BBF-A05C-40AD-BBD1-2A36E2ED3EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{076B7BBF-A05C-40AD-BBD1-2A36E2ED3EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{076B7BBF-A05C-40AD-BBD1-2A36E2ED3EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A5C035A-215E-4D58-A365-340D58F03AF3}
+	EndGlobalSection
+EndGlobal
