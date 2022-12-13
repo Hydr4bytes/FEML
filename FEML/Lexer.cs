@@ -87,32 +87,27 @@ namespace FEML
         }
     }
 
-    internal class Lexer
+    internal static class Lexer
     {
-        private readonly TokenDefinition[] tokenDefinitions;
-
-        public Lexer()
+        private static readonly TokenDefinition[] tokenDefinitions = new TokenDefinition[]
         {
-            this.tokenDefinitions = new TokenDefinition[]
-            {
-                new TokenDefinition(TokenType.Equals, "^="),
-                new TokenDefinition(TokenType.Comma, "^,"),
-                new TokenDefinition(TokenType.Boolean, "^true|false"),
-                new TokenDefinition(TokenType.OpenParenthesis, "^\\("),
-                new TokenDefinition(TokenType.CloseParenthesis, "^\\)"),
-                new TokenDefinition(TokenType.OpenSquareBracket, "^\\["),
-                new TokenDefinition(TokenType.CloseSquareBracket, "^\\]"),
-                new TokenDefinition(TokenType.OpenCurlyBracket, "^\\{"),
-                new TokenDefinition(TokenType.CloseCurlyBracket, "^\\}"),
-                new TokenDefinition(TokenType.Comment, "^\\/\\*(.|\\n)*?\\*\\/"),
-                new TokenDefinition(TokenType.String, "^(\"|').*?(\"|')"),
-                new TokenDefinition(TokenType.Number, "^-?\\d+(\\.\\d+)?"),
-                new TokenDefinition(TokenType.Identifier, "^\\w+"),
-                new TokenDefinition(TokenType.Semicolon, "^;"),
-            };
-        }
+            new TokenDefinition(TokenType.Equals, "^="),
+            new TokenDefinition(TokenType.Comma, "^,"),
+            new TokenDefinition(TokenType.Boolean, "^true|false"),
+            new TokenDefinition(TokenType.OpenParenthesis, "^\\("),
+            new TokenDefinition(TokenType.CloseParenthesis, "^\\)"),
+            new TokenDefinition(TokenType.OpenSquareBracket, "^\\["),
+            new TokenDefinition(TokenType.CloseSquareBracket, "^\\]"),
+            new TokenDefinition(TokenType.OpenCurlyBracket, "^\\{"),
+            new TokenDefinition(TokenType.CloseCurlyBracket, "^\\}"),
+            new TokenDefinition(TokenType.Comment, "^\\/\\*(.|\\n)*?\\*\\/"),
+            new TokenDefinition(TokenType.String, "^(\"|').*?(\"|')"),
+            new TokenDefinition(TokenType.Number, "^-?\\d+(\\.\\d+)?"),
+            new TokenDefinition(TokenType.Identifier, "^\\w+"),
+            new TokenDefinition(TokenType.Semicolon, "^;"),
+        };
 
-        public List<Token> Tokenize(string lqlText)
+        public static List<Token> Tokenize(string lqlText)
         {
             var tokens = new List<Token>();
             string remainingText = lqlText;
@@ -135,7 +130,7 @@ namespace FEML
             return tokens;
         }
 
-        private TokenMatch FindMatch(string text)
+        private static TokenMatch FindMatch(string text)
         {
             foreach (var tokenDefinition in tokenDefinitions)
             {
