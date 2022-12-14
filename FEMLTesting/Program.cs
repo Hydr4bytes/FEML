@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics.Metrics;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using FEML;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FEMLTesting
 {
@@ -40,6 +42,28 @@ namespace FEMLTesting
             };
         ";
 
+        /*
+            foreach (var token in tokens)
+            {
+                string tokenString = String.Format("{0,-40}{1,-50}", token.Value, token.TokenType);
+                if (string.IsNullOrWhiteSpace(token.Value))
+                    tokenString = String.Format("{0,-40}{1,-50}", "END OF TOKENS", token.TokenType);
+
+                for (int i = 0; i < tokenString.Length; i++)
+                {
+                    if (i < token.Value.Length || (string.IsNullOrEmpty(token.Value) && i < 14))
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                    else
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+
+                    Console.Write(tokenString[i]);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine($"Total amount of tokens: {tokens.Count}");
+            Console.WriteLine();
+        */
+
         public class TestingClass
         {
             public class Audio
@@ -49,7 +73,7 @@ namespace FEMLTesting
             }
 
             public float number = 0f;
-            public List<object> message = new List<object>();
+            public List<string> message = new List<string>();
             public Audio audio = new Audio();
 
             public override string ToString()
@@ -60,6 +84,8 @@ namespace FEMLTesting
 
         private static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
             Dictionary<string, object> result = FEMLConvert.Deserialize(testingData);
 
             Console.WriteLine("JSON result:");
@@ -76,9 +102,17 @@ namespace FEMLTesting
 
             Console.WriteLine("Serialized class:");
             TestingClass testingClass = new TestingClass();
-            testingClass.message = new List<object>() { "test", "hi" };
+            testingClass.message = new List<string>() { "test", "hi" };
             testingClass.number = 420;
             Console.WriteLine(FEMLConvert.Serialize<TestingClass>(testingClass));
+            Console.WriteLine();
+
+            Console.WriteLine("Deserialized stream:");
+            byte[] byteArray = Encoding.ASCII.GetBytes(testingData);
+            MemoryStream stream = new MemoryStream(byteArray);
+            StreamReader reader = new StreamReader(stream);
+            Console.WriteLine(FEMLConvert.Serialize(FEMLConvert.DeserializeStream(reader)));
+            Console.WriteLine();
         }
     }
 }

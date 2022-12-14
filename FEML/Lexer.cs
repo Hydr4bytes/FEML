@@ -112,22 +112,45 @@ namespace FEML
             var tokens = new List<Token>();
             string remainingText = lqlText;
 
-            while (!string.IsNullOrWhiteSpace(remainingText))
+            foreach (TokenMatch match in FindMatches(remainingText))
             {
-                var match = FindMatch(remainingText);
+                tokens.Add(new Token(match.TokenType, match.Value));
+            }
+
+            return tokens;
+        }
+
+        public static IEnumerable<Token> TokenizeStream(StreamReader sr)
+        {
+            string? line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                foreach (TokenMatch match in FindMatches(line))
+                {
+                    yield return new Token(match.TokenType, match.Value);
+                }
+            }
+        }
+
+        private static List<TokenMatch> FindMatches(string text)
+        {
+            var matches = new List<TokenMatch>();
+
+            while (!string.IsNullOrWhiteSpace(text))
+            {
+                var match = FindMatch(text);
                 if (match.IsMatch)
                 {
-                    tokens.Add(new Token(match.TokenType, match.Value));
-                    remainingText = match.RemainingText;
+                    matches.Add(match);
+                    text = match.RemainingText;
                 }
                 else
                 {
-                    remainingText = remainingText.Substring(1);
+                    text = text.Substring(1);
                 }
             }
 
-            //tokens.Add(new Token(TokenType.SequenceTerminator, string.Empty));
-            return tokens;
+            return matches;
         }
 
         private static TokenMatch FindMatch(string text)

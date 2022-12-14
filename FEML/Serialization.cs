@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -24,9 +25,15 @@ namespace FEML
                 {
                     AppendStruct(sb, (Dictionary<string, object>)item.Value);
                 }
-                else if (item.Value is List<object>)
+                else if (item.Value is IList)
                 {
-                    AppendArray(sb, (List<object>)item.Value);
+                    List<object> list = new List<object>();
+                    foreach (var item2 in (IList)item.Value)
+                    {
+                        list.Add(item2);
+                    }
+
+                    AppendArray(sb, list);
                 }
                 else
                 {
@@ -45,7 +52,18 @@ namespace FEML
             var last = input.Last();
             foreach (var field in input)
             {
+                if (field.GetType() == typeof(string))
+                {
+                    sb.Append("\"");
+                }
+
                 sb.Append(field);
+
+                if (field.GetType() == typeof(string))
+                {
+                    sb.Append("\"");
+                }
+
                 if (field != last)
                     sb.Append(", ");
             }

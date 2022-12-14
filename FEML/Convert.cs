@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace FEML
@@ -54,28 +55,21 @@ namespace FEML
         public static Dictionary<string, object> Deserialize(string input)
         {
             var tokens = Lexer.Tokenize(input);
-
-            foreach (var token in tokens)
-            {
-                string tokenString = String.Format("{0,-40}{1,-50}", token.Value, token.TokenType);
-                if (string.IsNullOrWhiteSpace(token.Value))
-                    tokenString = String.Format("{0,-40}{1,-50}", "END OF TOKENS", token.TokenType);
-
-                for (int i = 0; i < tokenString.Length; i++)
-                {
-                    if (i < token.Value.Length || (string.IsNullOrEmpty(token.Value) && i < 14))
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                    else
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-
-                    Console.Write(tokenString[i]);
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine($"Total amount of tokens: {tokens.Count}");
-            Console.WriteLine();
-
             return Parser.Parse(tokens);
+        }
+
+        public static Dictionary<string, object> DeserializeStream(StreamReader input)
+        {
+            var tokens = Lexer.TokenizeStream(input);
+            return Parser.Parse(tokens.ToList());
+        }
+
+        public static T DeserializeStream<T>(StreamReader input)
+        {
+            var tokens = Lexer.TokenizeStream(input);
+            var result = Parser.Parse(tokens.ToList());
+
+            return RecursiveClassDeserialize<T>(result);
         }
 
         public static T Deserialize<T>(string input)
@@ -100,7 +94,6 @@ namespace FEML
                 if (dataField.Value.GetType() == typeof(Dictionary<string, object>))
                 {
                     FieldInfo? sub = obj.GetType().GetField(dataField.Key);
-
                     if (sub != null)
                     {
                         object subClassDeserialize = RecursiveClassDeserialize(sub.FieldType, (Dictionary<string, object>)dataField.Value);
@@ -112,7 +105,22 @@ namespace FEML
                     FieldInfo? info = type.GetField(dataField.Key);
                     if (info != null)
                     {
-                        info.SetValue(obj, dataField.Value);
+                        if (dataField.Value.GetType() == typeof(List<object>))
+                        {
+                            object? instance = Activator.CreateInstance(info.FieldType);
+                            IList? list = (IList?)instance;
+
+                            foreach (var item in (List<object>)dataField.Value)
+                            {
+                                list?.Add(item);
+                            }
+
+                            info.SetValue(obj, instance);
+                        }
+                        else
+                        {
+                            info.SetValue(obj, dataField.Value);
+                        }
                     }
                 }
             }
